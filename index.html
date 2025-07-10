@@ -409,17 +409,28 @@
 
 
 
-    // Manual player entity ID input
-    function setPlayerEntityId() {
-      const input = prompt("Enter player entity ID (hex format):");
-      if (input && input.startsWith('0x')) {
-        playerEntityId = input;
-        updateStatus(`Player Entity ID set to: ${playerEntityId}`);
-        console.log("Manually set player entity ID:", playerEntityId);
+
+
+    // Initialize world contract
+    async function initializeWorldContract() {
+      try {
+        // Try to get world contract from window
+        world = window.world || window.dust?.world;
         
-        // Reinitialize UI with the new player entity ID
-        initializeUI();
+        if (!world) {
+          console.log("World contract not available yet, will retry later");
+          return;
+        }
+        
+        console.log("World contract initialized:", world);
+      } catch (error) {
+        console.error("Error initializing world contract:", error);
       }
+    }
+
+    // Load trades
+    function loadTrades() {
+      renderTrades();
     }
 
     // Initialize the UI
