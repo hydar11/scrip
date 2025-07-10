@@ -1,80 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Chest</title>
-    <link rel="stylesheet" href="ShopChestUI.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: transparent;
-        }
-        #root {
-            width: 100%;
-            height: 100vh;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Shop Chest</title>
+  <meta name="viewport" content="width=600, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #181818;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .shop-chest-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2em;
+      background: #232323;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #000a;
+    }
+    .trade {
+      margin: 1em 0;
+      padding: 1em;
+      background: #222;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    .trade-title {
+      font-size: 1.2em;
+      margin-bottom: 0.5em;
+    }
+    .trade-desc {
+      font-size: 0.95em;
+      margin-bottom: 0.5em;
+      color: #aaa;
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
-    
-    <script type="module">
-        import { ShopChestUI } from './ShopChestUI.tsx';
-        
-        // Default trade configuration
-        const trades = [
-            {
-                id: "pumpkin-soup",
-                name: "Pumpkin for Soup",
-                description: "Trade 1 Pumpkin for 1 PumpkinSoup",
-                input: {
-                    type: "item",
-                    item: "Pumpkin",
-                    amount: 1,
-                    objectType: 94
-                },
-                output: {
-                    type: "item",
-                    item: "PumpkinSoup",
-                    amount: 1,
-                    objectType: 32791
-                },
-                ethRequired: 0
-            },
-            {
-                id: "eth-pumpkin",
-                name: "ETH for Pumpkin",
-                description: "Buy 1 Pumpkin for 0.000001 ETH",
-                input: {
-                    type: "eth",
-                    amount: "0.000001",
-                    weiAmount: 1000000000000
-                },
-                output: {
-                    type: "item",
-                    item: "Pumpkin",
-                    amount: 1,
-                    objectType: 94
-                },
-                ethRequired: 1000000000000
-            }
-        ];
-
-        const systemId = "0x73797465732f73686f700000000000000000000000000000000000000000";
-        const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C";
-
-        // Render the component
-        const root = document.getElementById('root');
-        const app = React.createElement(ShopChestUI, {
-            trades: trades,
-            systemId: systemId,
-            worldAddress: worldAddress
-        });
-        
-        ReactDOM.render(app, root);
-    </script>
+  <div class="shop-chest-container">
+    <h1>Shop Chest</h1>
+    <div class="trade">
+      <div class="trade-title">Pumpkin for Soup</div>
+      <div class="trade-desc">Trade 1 Pumpkin for 1 PumpkinSoup</div>
+      <div>Input: 1 Pumpkin → Output: 1 PumpkinSoup</div>
+    </div>
+    <div class="trade">
+      <div class="trade-title">ETH for Pumpkin</div>
+      <div class="trade-desc">Buy 1 Pumpkin for 0.000001 ETH</div>
+      <div>Input: 0.000001 ETH → Output: 1 Pumpkin</div>
+    </div>
+    <p style="margin-top:2em;font-size:0.9em;color:#888;">(This is a static demo UI. Add interactivity with a build step if needed.)</p>
+  </div>
 </body>
 </html> 
