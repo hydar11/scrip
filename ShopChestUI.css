@@ -1,0 +1,163 @@
+.shop-chest-ui {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 400px;
+  max-width: 600px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 2px solid #3498db;
+  color: white;
+  font-family: 'Arial', sans-serif;
+}
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #3498db;
+}
+
+.shop-header h2 {
+  margin: 0;
+  color: #ecf0f1;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.close-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background: #c0392b;
+}
+
+.trades-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.trade-item {
+  background: rgba(52, 73, 94, 0.8);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #34495e;
+  transition: all 0.2s;
+}
+
+.trade-item:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(52, 152, 219, 0.2);
+}
+
+.trade-info h3 {
+  margin: 0 0 8px 0;
+  color: #3498db;
+  font-size: 18px;
+}
+
+.trade-info p {
+  margin: 0 0 16px 0;
+  color: #bdc3c7;
+  font-size: 14px;
+}
+
+.trade-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(44, 62, 80, 0.5);
+  border-radius: 6px;
+}
+
+.input, .output {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.input span:first-child, .output span:first-child {
+  font-size: 12px;
+  color: #95a5a6;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.input span:last-child, .output span:last-child {
+  font-size: 16px;
+  color: #ecf0f1;
+  font-weight: bold;
+}
+
+.arrow {
+  color: #3498db;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.trade-button {
+  width: 100%;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.trade-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2980b9, #1f5f8b);
+  transform: translateY(-1px);
+}
+
+.trade-button:disabled {
+  background: #7f8c8d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.transaction-status {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(241, 196, 15, 0.2);
+  border: 1px solid #f39c12;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.transaction-status p {
+  margin: 4px 0;
+  color: #f39c12;
+  font-size: 14px;
+}
+
+.transaction-status p:last-child {
+  font-family: monospace;
+  font-size: 12px;
+  word-break: break-all;
+} 
