@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Chest</title>
+    <link rel="stylesheet" href="ShopChestUI.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: transparent;
+        }
+        #root {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="module">
+        import { ShopChestUI } from './ShopChestUI.tsx';
+        
+        // Default trade configuration
+        const trades = [
+            {
+                id: "pumpkin-soup",
+                name: "Pumpkin for Soup",
+                description: "Trade 1 Pumpkin for 1 PumpkinSoup",
+                input: {
+                    type: "item",
+                    item: "Pumpkin",
+                    amount: 1,
+                    objectType: 94
+                },
+                output: {
+                    type: "item",
+                    item: "PumpkinSoup",
+                    amount: 1,
+                    objectType: 32791
+                },
+                ethRequired: 0
+            },
+            {
+                id: "eth-pumpkin",
+                name: "ETH for Pumpkin",
+                description: "Buy 1 Pumpkin for 0.000001 ETH",
+                input: {
+                    type: "eth",
+                    amount: "0.000001",
+                    weiAmount: 1000000000000
+                },
+                output: {
+                    type: "item",
+                    item: "Pumpkin",
+                    amount: 1,
+                    objectType: 94
+                },
+                ethRequired: 1000000000000
+            }
+        ];
+
+        const systemId = "0x73797465732f73686f700000000000000000000000000000000000000000";
+        const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C";
+
+        // Render the component
+        const root = document.getElementById('root');
+        const app = React.createElement(ShopChestUI, {
+            trades: trades,
+            systemId: systemId,
+            worldAddress: worldAddress
+        });
+        
+        ReactDOM.render(app, root);
+    </script>
+</body>
+</html> 
