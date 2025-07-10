@@ -223,8 +223,37 @@
         ethRequired: 1000000000000
       }
     ];
-    const systemId = "0x73796b6f720000000000000000000000736b6f72000000000000000000000000";
-    const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C";
+
+    // Access Dust context for entity information
+    function getDustContext() {
+      // Try different ways Dust might provide context
+      return window.dust?.entityContext || 
+             window.dust?.context || 
+             window.dust?.entity ||
+             window.dust?.appContext ||
+             {};
+    }
+
+    // Get the chest entity ID from Dust context
+    function getChestEntityId() {
+      const context = getDustContext();
+      console.log("Dust context:", context);
+      
+      // The chest entity ID should be available in the context
+      return context.entityId || context.id || context.entity?.id;
+    }
+
+    // Get player entity ID from Dust context
+    function getPlayerEntityId() {
+      const context = getDustContext();
+      return context.playerId || context.player?.id || context.user?.id;
+    }
+
+    // Access the world object if available
+    function getWorld() {
+      return window.world || window.dust?.world;
+    }
+
     function showStatus(message, type = 'success') {
       const statusDiv = document.getElementById('status');
       statusDiv.innerHTML = `<div class="status-message">${message}</div>`;
@@ -232,25 +261,120 @@
         statusDiv.innerHTML = '';
       }, 4000);
     }
+
     async function executeTrade(tradeId) {
       const trade = trades.find(t => t.id === tradeId);
       if (!trade) {
         showStatus('Trade not found!');
         return;
       }
+
       const button = document.querySelector(`[data-trade-id="${tradeId}"]`);
       button.disabled = true;
       button.textContent = 'Processing...';
+
       try {
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        // Get entity context from Dust
+        const chestEntityId = getChestEntityId();
+        const playerEntityId = getPlayerEntityId();
+        const world = getWorld();
+
+        console.log("Chest Entity ID:", chestEntityId);
+        console.log("Player Entity ID:", playerEntityId);
+        console.log("World object:", world);
+
+        if (!chestEntityId) {
+          showStatus('❌ Error: Could not get chest entity ID from Dust context');
+          return;
+        }
+
+        if (!world) {
+          showStatus('❌ Error: Could not access world object');
+          return;
+        }
+
+        // Find player's Pumpkin in inventory
+        const pumpkinSlot = await findPumpkinSlot(world, playerEntityId);
+        
+        if (pumpkinSlot === null) {
+          showStatus('❌ You need Pumpkin to make this trade!');
+          return;
+        }
+
+        // Execute the trade using transferAmounts
+        if (trade.input.type === 'item') {
+          // Item trade (Pumpkin → PumpkinSoup)
+          await world.write("transferAmounts", 
+            playerEntityId, // caller
+            playerEntityId, // from (player inventory)
+            chestEntityId,  // to (chest)
+            [[pumpkinSlot, trade.input.amount]] // [slot, amount]
+          );
+        } else {
+          // ETH trade (ETH → Pumpkin)
+          await world.write("transferAmounts", 
+            playerEntityId, // caller
+            playerEntityId, // from (player inventory)
+            chestEntityId,  // to (chest)
+            [], // no items transferred (ETH is sent separately)
+            { value: trade.ethRequired } // ETH amount
+          );
+        }
+
         showStatus(`✅ Trade completed! You exchanged ${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.amount + 'x ' + trade.input.item : trade.input.amount + ' ETH'} for ${trade.output.emoji} ${trade.output.amount}x ${trade.output.item}`);
+
       } catch (error) {
-        showStatus('❌ Trade failed. Please try again.');
+        console.error("Trade error:", error);
+        showStatus('❌ Trade failed: ' + (error.message || 'Unknown error'));
       } finally {
         button.disabled = false;
         button.textContent = 'Make Trade';
       }
     }
+
+    // Function to find Pumpkin in player's inventory
+    async function findPumpkinSlot(world, playerEntityId) {
+      try {
+        // Use the working inventory scanning code
+        for (let i = 0; i < 36; i++) {
+          try {
+            const encodedSlot = "0x" + i.toString(16).padStart(64, '0');
+            const slotData = await world.read("getRecord", 
+              "0x74620000000000000000000000000000496e76656e746f7279536c6f74000000",
+              [playerEntityId, encodedSlot],
+            );
+            
+            const staticData = slotData[0];
+            const amount = decodeUint16(staticData);
+            const objectType = decodeObjectType(staticData);
+            
+            if (objectType === 94 && amount > 0) { // Pumpkin ID
+              return i;
+            }
+          } catch (error) {
+            // Skip errors
+          }
+        }
+        return null; // No Pumpkin found
+      } catch (error) {
+        console.error("Error finding Pumpkin:", error);
+        return null;
+      }
+    }
+
+    // Helper functions for decoding inventory data
+    function decodeUint16(bytesHex) {
+      if (bytesHex === '0x') return 0;
+      const last4Chars = bytesHex.slice(-4);
+      return parseInt(last4Chars, 16);
+    }
+
+    function decodeObjectType(staticData) {
+      if (staticData === '0x') return 0;
+      const objectTypeHex = staticData.slice(-8, -4);
+      return parseInt(objectTypeHex, 16);
+    }
+
     function renderTrades() {
       const container = document.getElementById('trades-container');
       const tradesHTML = trades.map(trade => `
@@ -275,9 +399,19 @@
       `).join('');
       container.innerHTML = tradesHTML;
     }
+
     document.addEventListener('DOMContentLoaded', function() {
       renderTrades();
-      showStatus('🏪 Shop Chest is ready for trading!');
+      
+      // Log Dust context for debugging
+      const context = getDustContext();
+      console.log("Dust context on load:", context);
+      
+      if (context.entityId) {
+        showStatus(`🏪 Shop Chest ready! Entity ID: ${context.entityId}`);
+      } else {
+        showStatus('🏪 Shop Chest is ready for trading!');
+      }
     });
   </script>
 </body>
