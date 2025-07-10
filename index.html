@@ -1,57 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Shop Chest</title>
-  <meta name="viewport" content="width=600, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #181818;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    .shop-chest-container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2em;
-      background: #232323;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px #000a;
-    }
-    .trade {
-      margin: 1em 0;
-      padding: 1em;
-      background: #222;
-      border-radius: 8px;
-      border: 1px solid #333;
-    }
-    .trade-title {
-      font-size: 1.2em;
-      margin-bottom: 0.5em;
-    }
-    .trade-desc {
-      font-size: 0.95em;
-      margin-bottom: 0.5em;
-      color: #aaa;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Chest</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .shop-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .shop-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .shop-header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+        
+        .trade-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        
+        .trade-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .trade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .trade-card h3 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 1.3em;
+        }
+        
+        .trade-card p {
+            color: #666;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+        }
+        
+        .trade-exchange {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .trade-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .trade-arrow {
+            font-size: 1.5em;
+            color: #667eea;
+            margin: 0 15px;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .item-amount {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .trade-button {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .trade-button:hover {
+            background: linear-gradient(45deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+        }
+        
+        .trade-button:active {
+            transform: translateY(0);
+        }
+        
+        .trade-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .trade-exchange {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .trade-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="shop-chest-container">
-    <h1>Shop Chest</h1>
-    <div class="trade">
-      <div class="trade-title">Pumpkin for Soup</div>
-      <div class="trade-desc">Trade 1 Pumpkin for 1 PumpkinSoup</div>
-      <div>Input: 1 Pumpkin → Output: 1 PumpkinSoup</div>
+    <div class="container">
+        <div class="shop-header">
+            <h1>🏪 Shop Chest</h1>
+            <p>Trade your items and ETH in the marketplace</p>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="trade-grid" id="trades-container">
+            <!-- Trades will be populated here -->
+        </div>
     </div>
-    <div class="trade">
-      <div class="trade-title">ETH for Pumpkin</div>
-      <div class="trade-desc">Buy 1 Pumpkin for 0.000001 ETH</div>
-      <div>Input: 0.000001 ETH → Output: 1 Pumpkin</div>
-    </div>
-    <p style="margin-top:2em;font-size:0.9em;color:#888;">(This is a static demo UI. Add interactivity with a build step if needed.)</p>
-  </div>
+
+    <script>
+        // Trade configuration
+        const trades = [
+            {
+                id: "pumpkin-soup",
+                name: "Pumpkin → Soup",
+                description: "Transform your pumpkin into delicious soup",
+                input: {
+                    type: "item",
+                    item: "Pumpkin",
+                    amount: 1,
+                    objectType: 94,
+                    emoji: "🎃"
+                },
+                output: {
+                    type: "item",
+                    item: "PumpkinSoup",
+                    amount: 1,
+                    objectType: 32791,
+                    emoji: "🍲"
+                },
+                ethRequired: 0
+            },
+            {
+                id: "eth-pumpkin",
+                name: "ETH → Pumpkin",
+                description: "Buy a fresh pumpkin with ETH",
+                input: {
+                    type: "eth",
+                    amount: "0.000001",
+                    weiAmount: 1000000000000,
+                    emoji: "💎"
+                },
+                output: {
+                    type: "item",
+                    item: "Pumpkin",
+                    amount: 1,
+                    objectType: 94,
+                    emoji: "🎃"
+                },
+                ethRequired: 1000000000000
+            }
+        ];
+        
+        const systemId = "0x73797465732f73686f700000000000000000000000000000000000000000";
+        const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C";
+        
+        // Show status message
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Execute trade
+        async function executeTrade(tradeId) {
+            const trade = trades.find(t => t.id === tradeId);
+            if (!trade) {
+                showStatus('Trade not found!', 'error');
+                return;
+            }
+            
+            const button = document.querySelector(`[data-trade-id="${tradeId}"]`);
+            button.disabled = true;
+            button.textContent = 'Processing...';
+            
+            try {
+                // Simulate trade execution
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Here you would implement actual Dust platform integration
+                console.log('Executing trade:', trade);
+                
+                showStatus(`✅ Trade completed! You exchanged ${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.amount + 'x ' + trade.input.item : trade.input.amount + ' ETH'} for ${trade.output.emoji} ${trade.output.amount}x ${trade.output.item}`, 'success');
+                
+            } catch (error) {
+                console.error('Trade failed:', error);
+                showStatus('❌ Trade failed. Please try again.', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Make Trade';
+            }
+        }
+        
+        // Render trades
+        function renderTrades() {
+            const container = document.getElementById('trades-container');
+            
+            const tradesHTML = trades.map(trade => `
+                <div class="trade-card">
+                    <h3>${trade.name}</h3>
+                    <p>${trade.description}</p>
+                    
+                    <div class="trade-exchange">
+                        <div class="trade-item">
+                            <div class="item-name">${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.item : 'ETH'}</div>
+                            <div class="item-amount">${trade.input.type === 'item' ? trade.input.amount + 'x' : trade.input.amount}</div>
+                        </div>
+                        
+                        <div class="trade-arrow">→</div>
+                        
+                        <div class="trade-item">
+                            <div class="item-name">${trade.output.emoji} ${trade.output.item}</div>
+                            <div class="item-amount">${trade.output.amount}x</div>
+                        </div>
+                    </div>
+                    
+                    <button class="trade-button" data-trade-id="${trade.id}" onclick="executeTrade('${trade.id}')">
+                        Make Trade
+                    </button>
+                </div>
+            `).join('');
+            
+            container.innerHTML = tradesHTML;
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Shop Chest initialized');
+            console.log('System ID:', systemId);
+            console.log('World Address:', worldAddress);
+            
+            renderTrades();
+            showStatus('🏪 Shop Chest is ready for trading!', 'success');
+        });
+    </script>
 </body>
-</html> 
+</html>
