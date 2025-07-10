@@ -208,7 +208,12 @@
     &copy; 2024 Shop Chest &mdash; Powered by Dust/MUD
   </footer>
   <script>
-    // Trade configuration
+    // Global variables
+    let chestEntityId = null;
+    let playerEntityId = null;
+    let world = null;
+
+    // Trade definitions
     const trades = [
       {
         id: "pumpkin-soup",
@@ -253,7 +258,7 @@
 
 
 
-    // Get entity IDs from Dust context or manual input
+    // Get entity IDs - always use the known chest entity ID
     function getEntityIds() {
       // Always use the known chest entity ID
       chestEntityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
