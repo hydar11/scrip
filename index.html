@@ -200,8 +200,6 @@
   <div class="container">
     <div class="status-bar">
         <div id="status">Ready to trade</div>
-        <button onclick="setChestEntityId()" class="btn-secondary">Set Chest ID</button>
-        <button onclick="extractEntityFromConsoleLog()" class="btn-secondary">Use Known Chest</button>
         <button onclick="setPlayerEntityId()" class="btn-secondary">Set Player ID</button>
     </div>
     <div class="trade-grid" id="trades-container"></div>
@@ -294,6 +292,9 @@
       chestEntityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
       console.log("Using chest entity ID:", chestEntityId);
       
+      // Update status to show the chest entity ID
+      updateStatus(`Chest Entity ID: ${chestEntityId}`);
+      
       // Try to get player entity ID from world contract
       getPlayerEntityId();
       
@@ -325,12 +326,18 @@
       return window.world || window.dust?.world;
     }
 
-    function showStatus(message, type = 'success') {
-      const statusDiv = document.getElementById('status');
-      statusDiv.innerHTML = `<div class="status-message">${message}</div>`;
-      setTimeout(() => {
-        statusDiv.innerHTML = '';
-      }, 4000);
+    // Update status display
+    function updateStatus(message) {
+      const statusElement = document.getElementById('status');
+      if (statusElement) {
+        statusElement.textContent = message;
+      }
+      console.log("Status:", message);
+    }
+
+    // Show status message
+    function showStatus(message) {
+      updateStatus(message);
     }
 
     async function executeTrade(tradeId) {
@@ -503,19 +510,6 @@
       }
     }
 
-    // Manual chest entity ID input (fallback)
-    function setChestEntityId() {
-      const input = prompt("Enter chest entity ID (hex format):");
-      if (input && input.startsWith('0x')) {
-        chestEntityId = input;
-        updateStatus(`Chest Entity ID set to: ${chestEntityId}`);
-        console.log("Manually set chest entity ID:", chestEntityId);
-        
-        // Reinitialize UI with the new chest entity ID
-        initializeUI();
-      }
-    }
-
     // Manual player entity ID input
     function setPlayerEntityId() {
       const input = prompt("Enter player entity ID (hex format):");
@@ -527,23 +521,6 @@
         // Reinitialize UI with the new player entity ID
         initializeUI();
       }
-    }
-
-    // Extract entity ID from Dust console log data
-    function extractEntityFromConsoleLog() {
-      // The entity ID from your console log
-      const entityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
-      
-      if (entityId) {
-        chestEntityId = entityId;
-        updateStatus(`Chest Entity ID extracted: ${chestEntityId}`);
-        console.log("Extracted chest entity ID:", chestEntityId);
-        
-        // Reinitialize UI with the extracted chest entity ID
-        initializeUI();
-        return true;
-      }
-      return false;
     }
 
     // Initialize the UI
