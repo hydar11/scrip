@@ -129,6 +129,21 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px #0002;
     }
+    .refresh-button {
+      background: #4a5568;
+      color: #e0e0e0;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: background 0.2s;
+    }
+    .refresh-button:hover {
+      background: #3a404a;
+    }
     .trade-button:active {
       transform: translateY(0);
     }
@@ -174,6 +189,7 @@
   </div>
   <div class="container">
     <div id="status">🏪 Shop Chest is ready for trading!</div>
+    <button onclick="refreshUI()" class="refresh-button">🔄 Refresh</button>
     <div class="trade-grid" id="trades-container"></div>
   </div>
   <footer>
@@ -209,19 +225,46 @@
       console.log("Initializing Shop Chest UI...");
       console.log("Chest Entity ID:", chestEntityId);
       
-      // Try to get world contract
-      world = window.world || window.dust?.world;
-      console.log("World object:", world);
+      // Try to get world contract with retries
+      let retries = 0;
+      const maxRetries = 10;
+      
+      while (retries < maxRetries) {
+        world = window.world || window.dust?.world;
+        
+        if (world) {
+          console.log("World object found:", world);
+          break;
+        }
+        
+        console.log(`World object not available, retry ${retries + 1}/${maxRetries}`);
+        retries++;
+        
+        if (retries < maxRetries) {
+          // Wait 1 second before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      
+      if (!world) {
+        console.log("World object still not available after retries");
+        showStatus('⚠️ World object not available. Click "Refresh" to retry.');
+        return;
+      }
       
       // Try to get player entity ID automatically
-      if (world) {
-        await getPlayerEntityId();
-        console.log("Player Entity ID:", playerEntityId);
-      }
+      await getPlayerEntityId();
+      console.log("Player Entity ID:", playerEntityId);
       
       // Load trades
       renderTrades();
       showStatus('🏪 Shop Chest is ready for trading!');
+    }
+
+    // Manual refresh function
+    function refreshUI() {
+      showStatus('🔄 Refreshing...');
+      initializeUI();
     }
 
     // Update status display
