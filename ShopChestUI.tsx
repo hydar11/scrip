@@ -6,22 +6,25 @@ interface Trade {
   name: string;
   description: string;
   input: {
-    type: 'item' | 'eth';
+    type: string;
     item?: string;
-    amount: number | string;
+    amount: number;
+    objectType?: number;
+    weiAmount?: number;
   };
   output: {
-    type: 'item';
+    type: string;
     item: string;
     amount: number;
+    objectType: number;
   };
   ethRequired: number;
 }
 
 interface ShopChestUIProps {
   trades: Trade[];
-  chestEntityId: string;
-  onClose: () => void;
+  chestEntityId?: string;
+  onClose?: () => void;
 }
 
 export function ShopChestUI({ trades, chestEntityId, onClose }: ShopChestUIProps) {
@@ -91,9 +94,13 @@ export function ShopChestUI({ trades, chestEntityId, onClose }: ShopChestUIProps
     <div className="shop-chest-ui">
       <div className="shop-header">
         <h2>Shop Chest</h2>
-        <button onClick={onClose} className="close-button">×</button>
+        {onClose && (
+          <button className="close-button" onClick={onClose}>
+            ×
+          </button>
+        )}
       </div>
-
+      
       <div className="trades-container">
         {trades.map((trade) => (
           <div key={trade.id} className="trade-item">
@@ -103,40 +110,42 @@ export function ShopChestUI({ trades, chestEntityId, onClose }: ShopChestUIProps
               
               <div className="trade-details">
                 <div className="input">
-                  <span>Give: </span>
-                  {trade.input.type === 'item' ? (
-                    <span>{trade.input.amount}x {trade.input.item}</span>
-                  ) : (
+                  <span>Input: </span>
+                  {trade.input.type === 'eth' ? (
                     <span>{trade.input.amount} ETH</span>
+                  ) : (
+                    <span>{trade.input.amount} {trade.input.item}</span>
                   )}
                 </div>
                 
                 <div className="arrow">→</div>
                 
                 <div className="output">
-                  <span>Get: </span>
-                  <span>{trade.output.amount}x {trade.output.item}</span>
+                  <span>Output: </span>
+                  <span>{trade.output.amount} {trade.output.item}</span>
                 </div>
               </div>
             </div>
-
+            
             <button
+              className="trade-button"
               onClick={() => handleTrade(trade)}
               disabled={isProcessing || isTransactionPending}
-              className="trade-button"
             >
               {isProcessing && selectedTrade?.id === trade.id ? 'Processing...' : 'Trade'}
             </button>
           </div>
         ))}
       </div>
-
+      
       {isTransactionPending && (
         <div className="transaction-status">
           <p>Transaction pending...</p>
-          <p>Hash: {tradeData?.hash}</p>
         </div>
       )}
     </div>
   );
-} 
+}
+
+// Default export for module loading
+export default ShopChestUI; 
