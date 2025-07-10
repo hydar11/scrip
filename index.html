@@ -16,17 +16,110 @@
             width: 100%;
             height: 100vh;
         }
+        .shop-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .trade-item {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .trade-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .trade-item p {
+            margin: 0 0 10px 0;
+            color: #666;
+        }
+        .trade-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .trade-button:hover {
+            background: #45a049;
+        }
+        .trade-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .trade-details {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .input-output {
+            display: flex;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .trade-side {
+            flex: 1;
+        }
+        .trade-side h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .item-info {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="shop-container">
+            <h1>Shop Chest</h1>
+            <p>Welcome to the Shop Chest! Trade your items here:</p>
+            
+            <div class="trade-item">
+                <h3>Pumpkin for Soup</h3>
+                <p>Trade 1 Pumpkin for 1 PumpkinSoup</p>
+                <div class="input-output">
+                    <div class="trade-side">
+                        <h4>You Give:</h4>
+                        <div class="item-info">1x Pumpkin</div>
+                    </div>
+                    <div class="trade-side">
+                        <h4>You Get:</h4>
+                        <div class="item-info">1x PumpkinSoup</div>
+                    </div>
+                </div>
+                <button class="trade-button" onclick="executeTrade('pumpkin-soup')">Make Trade</button>
+            </div>
+            
+            <div class="trade-item">
+                <h3>ETH for Pumpkin</h3>
+                <p>Buy 1 Pumpkin for 0.000001 ETH</p>
+                <div class="input-output">
+                    <div class="trade-side">
+                        <h4>You Give:</h4>
+                        <div class="item-info">0.000001 ETH</div>
+                    </div>
+                    <div class="trade-side">
+                        <h4>You Get:</h4>
+                        <div class="item-info">1x Pumpkin</div>
+                    </div>
+                </div>
+                <button class="trade-button" onclick="executeTrade('eth-pumpkin')">Make Trade</button>
+            </div>
+        </div>
+    </div>
     
-    <script type="module">
-        import { ShopChestUI } from './ShopChestUI.tsx';
-        
-        // Default trade configuration
-        const trades = [
-            {
+    <script>
+        // Trade configuration
+        const trades = {
+            "pumpkin-soup": {
                 id: "pumpkin-soup",
                 name: "Pumpkin for Soup",
                 description: "Trade 1 Pumpkin for 1 PumpkinSoup",
@@ -44,7 +137,7 @@
                 },
                 ethRequired: 0
             },
-            {
+            "eth-pumpkin": {
                 id: "eth-pumpkin",
                 name: "ETH for Pumpkin",
                 description: "Buy 1 Pumpkin for 0.000001 ETH",
@@ -61,20 +154,32 @@
                 },
                 ethRequired: 1000000000000
             }
-        ];
-
+        };
+        
         const systemId = "0x73797465732f73686f700000000000000000000000000000000000000000";
         const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C";
-
-        // Render the component
-        const root = document.getElementById('root');
-        const app = React.createElement(ShopChestUI, {
-            trades: trades,
-            systemId: systemId,
-            worldAddress: worldAddress
-        });
         
-        ReactDOM.render(app, root);
+        // Function to execute trades
+        function executeTrade(tradeId) {
+            const trade = trades[tradeId];
+            if (!trade) {
+                console.error('Trade not found:', tradeId);
+                return;
+            }
+            
+            console.log('Executing trade:', trade);
+            
+            // Here you would implement the actual trade logic
+            // This might involve calling Dust platform APIs or smart contracts
+            // For now, we'll just show an alert
+            alert(`Trade executed: ${trade.name}\nGiving: ${trade.input.type === 'item' ? trade.input.amount + 'x ' + trade.input.item : trade.input.amount + ' ETH'}\nReceiving: ${trade.output.amount}x ${trade.output.item}`);
+        }
+        
+        // Initialize the shop when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Shop Chest initialized');
+            console.log('Available trades:', Object.keys(trades));
+        });
     </script>
 </body>
-</html> 
+</html>
