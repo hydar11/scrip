@@ -225,12 +225,29 @@
       console.log("Initializing Shop Chest UI...");
       console.log("Chest Entity ID:", chestEntityId);
       
+      // Debug: Check what's available in window
+      console.log("Window object keys:", Object.keys(window).filter(key => 
+        key.toLowerCase().includes('world') || 
+        key.toLowerCase().includes('dust') || 
+        key.toLowerCase().includes('contract') ||
+        key.toLowerCase().includes('ethereum')
+      ));
+      
+      console.log("window.world:", window.world);
+      console.log("window.dust:", window.dust);
+      console.log("window.ethereum:", window.ethereum);
+      
       // Try to get world contract with retries
       let retries = 0;
       const maxRetries = 10;
       
       while (retries < maxRetries) {
-        world = window.world || window.dust?.world;
+        // Try different ways to get the world object
+        world = window.world || 
+                window.dust?.world || 
+                window.dust?.contract ||
+                window.ethereum?.world ||
+                window.game?.world;
         
         if (world) {
           console.log("World object found:", world);
@@ -266,6 +283,17 @@
       showStatus('🔄 Refreshing...');
       initializeUI();
     }
+
+    // Function to manually set world object from console
+    function setWorldObject(worldObj) {
+      world = worldObj;
+      console.log("World object set manually:", world);
+      showStatus('✅ World object set manually. Click "Refresh" to continue.');
+    }
+
+    // Make functions available globally for console access
+    window.setWorldObject = setWorldObject;
+    window.refreshUI = refreshUI;
 
     // Update status display
     function updateStatus(message) {
