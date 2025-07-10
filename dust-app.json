@@ -4,7 +4,7 @@
   "description": "A shop where players can trade items for other items or ETH",
   "version": "1.0.0",
   "author": "Your Name",
-  "startUrl": "https://raw.githubusercontent.com/hydar11/scrip/refs/heads/main/index.html",
+  "startUrl": "https://raw.githubusercontent.com/hydar11/script/refs/heads/main/index.html",
   "defaultSize": {
     "width": 600,
     "height": 500
@@ -13,4 +13,4 @@
     "tags": ["shop", "trading", "items"],
     "category": "commerce"
   }
-}
+} 
