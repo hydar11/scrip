@@ -251,40 +251,7 @@
       }
     ];
 
-    // Access Dust context for entity information
-    function getDustContext() {
-      // Try different ways Dust might provide context
-      const context = window.dust?.entityContext || 
-             window.dust?.context || 
-             window.dust?.entity ||
-             window.dust?.appContext ||
-             {};
-      
-      // Check URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlEntityId = urlParams.get('entity') || urlParams.get('entityId') || urlParams.get('id');
-      
-      // Check for global variables
-      const globalEntityId = window.entityId || window.currentEntityId || window.targetEntityId;
-      
-      // Check for any global Dust-related objects
-      const globalDust = window.dust || window.Dust || window.DUST;
-      
-      // Check for entity data that might be stored globally
-      const globalEntityData = window.entityData || window.currentEntity || window.selectedEntity;
-      
-      console.log("URL parameters:", Object.fromEntries(urlParams.entries()));
-      console.log("Global entity ID:", globalEntityId);
-      console.log("Global Dust object:", globalDust);
-      console.log("Global entity data:", globalEntityData);
-      
-      // Return context with any found entity ID
-      return {
-        ...context,
-        entityId: context.entityId || urlEntityId || globalEntityId || globalEntityData?.entityId,
-        urlParams: Object.fromEntries(urlParams.entries())
-      };
-    }
+
 
     // Get entity IDs from Dust context or manual input
     function getEntityIds() {
@@ -352,9 +319,7 @@
       button.textContent = 'Processing...';
 
       try {
-        // Get entity context from Dust
-        const chestEntityId = getChestEntityId();
-        const playerEntityId = getPlayerEntityId();
+        // Use the known chest entity ID
         const world = getWorld();
 
         console.log("Chest Entity ID:", chestEntityId);
@@ -362,7 +327,7 @@
         console.log("World object:", world);
 
         if (!chestEntityId) {
-          showStatus('❌ Error: Could not get chest entity ID from Dust context');
+          showStatus('❌ Error: Chest entity ID not set');
           return;
         }
 
@@ -478,37 +443,7 @@
       container.innerHTML = tradesHTML;
     }
 
-    // Listen for Dust events
-    function setupDustEventListeners() {
-      window.addEventListener('message', (event) => {
-        console.log("Received message:", event.data);
-        if (event.data.type === 'entity-context' || event.data.entityId) {
-          console.log("Entity context from message:", event.data);
-          updateEntityContext(event.data);
-        }
-      });
 
-      // Listen for custom events
-      window.addEventListener('dust-entity-context', (event) => {
-        console.log("Dust entity context event:", event.detail);
-        updateEntityContext(event.detail);
-      });
-
-      // Listen for any Dust-related events
-      window.addEventListener('dust-entity-selected', (event) => {
-        console.log("Dust entity selected:", event.detail);
-        updateEntityContext(event.detail);
-      });
-    }
-
-    // Update entity context when received
-    function updateEntityContext(context) {
-      if (context.entityId) {
-        chestEntityId = context.entityId;
-        console.log("Updated chest entity ID:", chestEntityId);
-        updateStatus(`Chest Entity ID: ${chestEntityId}`);
-      }
-    }
 
     // Manual player entity ID input
     function setPlayerEntityId() {
@@ -550,39 +485,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       initializeUI();
-      
-      // Log Dust context for debugging
-      const context = getDustContext();
-      console.log("Dust context on load:", context);
-      
-      if (context.entityId) {
-        showStatus(`🏪 Shop Chest ready! Entity ID: ${context.entityId}`);
-      } else {
-        showStatus('🏪 Shop Chest is ready for trading!');
-      }
-
-      // Setup Dust event listeners
-      setupDustEventListeners();
-      
-      // Debug: Check what's available globally
-      console.log("Global window object keys:", Object.keys(window).filter(key => 
-        key.toLowerCase().includes('dust') || 
-        key.toLowerCase().includes('entity') || 
-        key.toLowerCase().includes('world') ||
-        key.toLowerCase().includes('game')
-      ));
-      
-      // Try to get context after a delay (Dust might load context asynchronously)
-      setTimeout(() => {
-        console.log("Delayed Dust context check:");
-        const delayedContext = getDustContext();
-        console.log("Delayed context:", delayedContext);
-        
-        if (delayedContext.entityId) {
-          chestEntityId = delayedContext.entityId;
-          updateStatus(`Chest Entity ID: ${chestEntityId}`);
-        }
-      }, 1000);
     });
   </script>
 </body>
