@@ -74,7 +74,7 @@ export function ShopChestUI({ trades, chestEntityId, onClose }: ShopChestUIProps
     try {
       // This is a simplified example - you'll need to construct the actual call data
       // based on your shop contract's interface
-      const systemId = '0x73797465732f73686f700000000000000000000000000000000000000000'; // Your system ID
+      const systemId = '0x73796b6f720000000000000000000000736b6f72000000000000000000000000'; // Your system ID
       
       // For now, we'll use a placeholder call data
       const callData = '0x'; // You'll need to encode the actual function call
