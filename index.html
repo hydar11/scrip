@@ -201,6 +201,8 @@
     <div class="status-bar">
         <div id="status">Ready to trade</div>
         <button onclick="setChestEntityId()" class="btn-secondary">Set Chest ID</button>
+        <button onclick="extractEntityFromConsoleLog()" class="btn-secondary">Use Known Chest</button>
+        <button onclick="setPlayerEntityId()" class="btn-secondary">Set Player ID</button>
     </div>
     <div class="trade-grid" id="trades-container"></div>
   </div>
@@ -270,31 +272,52 @@
       // Check for any global Dust-related objects
       const globalDust = window.dust || window.Dust || window.DUST;
       
+      // Check for entity data that might be stored globally
+      const globalEntityData = window.entityData || window.currentEntity || window.selectedEntity;
+      
       console.log("URL parameters:", Object.fromEntries(urlParams.entries()));
       console.log("Global entity ID:", globalEntityId);
       console.log("Global Dust object:", globalDust);
+      console.log("Global entity data:", globalEntityData);
       
       // Return context with any found entity ID
       return {
         ...context,
-        entityId: context.entityId || urlEntityId || globalEntityId,
+        entityId: context.entityId || urlEntityId || globalEntityId || globalEntityData?.entityId,
         urlParams: Object.fromEntries(urlParams.entries())
       };
     }
 
-    // Get the chest entity ID from Dust context
-    function getChestEntityId() {
-      const context = getDustContext();
-      console.log("Dust context:", context);
+    // Get entity IDs from Dust context or manual input
+    function getEntityIds() {
+      // Always use the known chest entity ID
+      chestEntityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
+      console.log("Using chest entity ID:", chestEntityId);
       
-      // The chest entity ID should be available in the context
-      return context.entityId || context.id || context.entity?.id;
+      // Try to get player entity ID from world contract
+      getPlayerEntityId();
+      
+      return true;
     }
-
-    // Get player entity ID from Dust context
-    function getPlayerEntityId() {
-      const context = getDustContext();
-      return context.playerId || context.player?.id || context.user?.id;
+    
+    // Get player entity ID from world contract
+    async function getPlayerEntityId() {
+      try {
+        if (!world) {
+          console.log("World contract not available");
+          return;
+        }
+        
+        // Try to get player entity ID from world contract
+        // This might be stored in a specific table or accessible via a function
+        console.log("Attempting to get player entity ID from world contract...");
+        
+        // For now, we'll need to get this manually or from the game state
+        updateStatus("ℹ️ Please set player entity ID manually if needed");
+        
+      } catch (error) {
+        console.error("Error getting player entity ID:", error);
+      }
     }
 
     // Access the world object if available
@@ -487,11 +510,69 @@
         chestEntityId = input;
         updateStatus(`Chest Entity ID set to: ${chestEntityId}`);
         console.log("Manually set chest entity ID:", chestEntityId);
+        
+        // Reinitialize UI with the new chest entity ID
+        initializeUI();
+      }
+    }
+
+    // Manual player entity ID input
+    function setPlayerEntityId() {
+      const input = prompt("Enter player entity ID (hex format):");
+      if (input && input.startsWith('0x')) {
+        playerEntityId = input;
+        updateStatus(`Player Entity ID set to: ${playerEntityId}`);
+        console.log("Manually set player entity ID:", playerEntityId);
+        
+        // Reinitialize UI with the new player entity ID
+        initializeUI();
+      }
+    }
+
+    // Extract entity ID from Dust console log data
+    function extractEntityFromConsoleLog() {
+      // The entity ID from your console log
+      const entityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
+      
+      if (entityId) {
+        chestEntityId = entityId;
+        updateStatus(`Chest Entity ID extracted: ${chestEntityId}`);
+        console.log("Extracted chest entity ID:", chestEntityId);
+        
+        // Reinitialize UI with the extracted chest entity ID
+        initializeUI();
+        return true;
+      }
+      return false;
+    }
+
+    // Initialize the UI
+    async function initializeUI() {
+      try {
+        console.log("Initializing Shop Chest UI...");
+        
+        // Always use the known chest entity ID
+        getEntityIds();
+        
+        // Initialize world contract
+        await initializeWorldContract();
+        
+        console.log("Chest Entity ID:", chestEntityId);
+        console.log("Player Entity ID:", playerEntityId);
+        console.log("World object:", world);
+        
+        // Load trades
+        loadTrades();
+        showStatus('🏪 Shop Chest is ready for trading!');
+        
+      } catch (error) {
+        console.error("Error initializing UI:", error);
+        showStatus('❌ Error initializing UI: ' + error.message);
       }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      renderTrades();
+      initializeUI();
       
       // Log Dust context for debugging
       const context = getDustContext();
