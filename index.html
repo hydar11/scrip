@@ -181,80 +181,47 @@
   </footer>
   <script>
     // Global variables
-    let chestEntityId = null;
+    let chestEntityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
     let playerEntityId = null;
     let world = null;
 
     // Trade definitions
     const trades = [
       {
-        id: "pumpkin-soup",
-        name: "Pumpkin → Soup",
-        description: "Transform your pumpkin into delicious soup",
-        input: {
-          type: "item",
-          item: "Pumpkin",
-          amount: 1,
-          objectType: 94,
-          emoji: "🎃"
-        },
-        output: {
-          type: "item",
-          item: "PumpkinSoup",
-          amount: 1,
-          objectType: 32791,
-          emoji: "🍲"
-        },
-        ethRequired: 0
+        id: 'pumpkin-soup',
+        name: 'Pumpkin to Soup',
+        description: 'Trade your Pumpkin for delicious PumpkinSoup',
+        input: { type: 'item', item: 'Pumpkin', amount: 1, emoji: '🎃' },
+        output: { item: 'PumpkinSoup', amount: 1, emoji: '🥣' }
       },
       {
-        id: "eth-pumpkin",
-        name: "ETH → Pumpkin",
-        description: "Buy a fresh pumpkin with ETH",
-        input: {
-          type: "eth",
-          amount: "0.000001",
-          weiAmount: 1000000000000,
-          emoji: "💎"
-        },
-        output: {
-          type: "item",
-          item: "Pumpkin",
-          amount: 1,
-          objectType: 94,
-          emoji: "🎃"
-        },
+        id: 'eth-pumpkin',
+        name: 'ETH to Pumpkin',
+        description: 'Buy Pumpkin with ETH',
+        input: { type: 'eth', amount: '0.000001', emoji: '💎' },
+        output: { item: 'Pumpkin', amount: 1, emoji: '🎃' },
         ethRequired: 1000000000000
       }
     ];
 
-
-
-
-    
-    // Get player entity ID from world contract
-    async function getPlayerEntityId() {
-      try {
-        if (!world) {
-          console.log("World contract not available");
-          return;
-        }
-        
-        // Try to get player entity ID from world contract
-        // This might be stored in a specific table or accessible via a function
-        console.log("Attempting to get player entity ID from world contract...");
-        
-        // For now, we'll need to get this manually or from the game state
-        updateStatus("ℹ️ Please set player entity ID manually if needed");
-        
-      } catch (error) {
-        console.error("Error getting player entity ID:", error);
+    // Simple initialization
+    async function initializeUI() {
+      console.log("Initializing Shop Chest UI...");
+      console.log("Chest Entity ID:", chestEntityId);
+      
+      // Try to get world contract
+      world = window.world || window.dust?.world;
+      console.log("World object:", world);
+      
+      // Try to get player entity ID automatically
+      if (world) {
+        await getPlayerEntityId();
+        console.log("Player Entity ID:", playerEntityId);
       }
-    }
-
-    // Access the world object if available
-    function getWorld() {
-      return window.world || window.dust?.world;
+      
+      // Load trades
+      renderTrades();
+      showStatus('🏪 Shop Chest is ready for trading!');
     }
 
     // Update status display
@@ -271,6 +238,33 @@
       updateStatus(message);
     }
 
+    // Render trades
+    function renderTrades() {
+      const container = document.getElementById('trades-container');
+      const tradesHTML = trades.map(trade => `
+        <div class="trade-card">
+          <div class="trade-title">${trade.name}</div>
+          <div class="trade-desc">${trade.description}</div>
+          <div class="trade-exchange">
+            <div class="trade-item">
+              <div class="item-name">${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.item : 'ETH'}</div>
+              <div class="item-amount">${trade.input.type === 'item' ? trade.input.amount + 'x' : trade.input.amount}</div>
+            </div>
+            <div class="trade-arrow">→</div>
+            <div class="trade-item">
+              <div class="item-name">${trade.output.emoji} ${trade.output.item}</div>
+              <div class="item-amount">${trade.output.amount}x</div>
+            </div>
+          </div>
+          <button class="trade-button" data-trade-id="${trade.id}" onclick="executeTrade('${trade.id}')">
+            Make Trade
+          </button>
+        </div>
+      `).join('');
+      container.innerHTML = tradesHTML;
+    }
+
+    // Execute trade
     async function executeTrade(tradeId) {
       const trade = trades.find(t => t.id === tradeId);
       if (!trade) {
@@ -283,34 +277,26 @@
       button.textContent = 'Processing...';
 
       try {
-        // Use the known chest entity ID
-        const world = getWorld();
-
-        console.log("Chest Entity ID:", chestEntityId);
-        console.log("Player Entity ID:", playerEntityId);
-        console.log("World object:", world);
-
-        if (!chestEntityId) {
-          showStatus('❌ Error: Chest entity ID not set');
-          return;
-        }
-
         if (!world) {
           showStatus('❌ Error: Could not access world object');
           return;
         }
 
-        // Find player's Pumpkin in inventory
-        const pumpkinSlot = await findPumpkinSlot(world, playerEntityId);
-        
-        if (pumpkinSlot === null) {
-          showStatus('❌ You need Pumpkin to make this trade!');
+        if (!playerEntityId) {
+          showStatus('❌ Error: Could not find player entity ID');
           return;
         }
 
-        // Execute the trade using transferAmounts
+        // Find player's Pumpkin in inventory for item trades
         if (trade.input.type === 'item') {
-          // Item trade (Pumpkin → PumpkinSoup)
+          const pumpkinSlot = await findPumpkinSlot(world, playerEntityId);
+          
+          if (pumpkinSlot === null) {
+            showStatus('❌ You need Pumpkin to make this trade!');
+            return;
+          }
+
+          // Execute item trade (Pumpkin → PumpkinSoup)
           await world.write("transferAmounts", 
             playerEntityId, // caller
             playerEntityId, // from (player inventory)
@@ -318,7 +304,7 @@
             [[pumpkinSlot, trade.input.amount]] // [slot, amount]
           );
         } else {
-          // ETH trade (ETH → Pumpkin)
+          // Execute ETH trade (ETH → Pumpkin)
           await world.write("transferAmounts", 
             playerEntityId, // caller
             playerEntityId, // from (player inventory)
@@ -369,6 +355,74 @@
       }
     }
 
+    // Helper function for decoding object type
+    function decodeObjectType(staticData) {
+      if (staticData === '0x') return 0;
+      const objectTypeHex = staticData.slice(-8, -4);
+      return parseInt(objectTypeHex, 16);
+    }
+
+    // Get player entity ID automatically
+    async function getPlayerEntityId() {
+      try {
+        if (!world) {
+          console.log("World contract not available");
+          return;
+        }
+        
+        // Try to get player entity ID from window object (set via console)
+        if (window.playerEntityId) {
+          playerEntityId = window.playerEntityId;
+          console.log("Using player entity ID from window:", playerEntityId);
+          return;
+        }
+        
+        // Try common player entity IDs
+        const possiblePlayerIds = [
+          '0x0000000000000000000000000000000000000000000000000000000000000001',
+          '0x0000000000000000000000000000000000000000000000000000000000000002',
+          '0x0000000000000000000000000000000000000000000000000000000000000003',
+          '0x0000000000000000000000000000000000000000000000000000000000000004',
+          '0x0000000000000000000000000000000000000000000000000000000000000005'
+        ];
+        
+        for (const testEntityId of possiblePlayerIds) {
+          try {
+            // Check if this entity has Pumpkin (objectType 94)
+            for (let slot = 0; slot < 36; slot++) {
+              try {
+                const encodedSlot = "0x" + slot.toString(16).padStart(64, '0');
+                const slotData = await world.read("getRecord", 
+                  "0x74620000000000000000000000000000496e76656e746f7279536c6f74000000",
+                  [testEntityId, encodedSlot],
+                );
+                
+                const staticData = slotData[0];
+                const amount = decodeUint16(staticData);
+                const objectType = decodeObjectType(staticData);
+                
+                if (objectType === 94 && amount > 0) { // Pumpkin found
+                  playerEntityId = testEntityId;
+                  console.log("Found player entity ID with Pumpkin:", playerEntityId);
+                  return;
+                }
+              } catch (error) {
+                // Skip errors
+              }
+            }
+          } catch (error) {
+            // Skip errors
+          }
+        }
+        
+        console.log("Could not automatically find player entity ID with Pumpkin");
+        console.log("To set player entity ID manually, run in console: window.playerEntityId = 'YOUR_ENTITY_ID'");
+        
+      } catch (error) {
+        console.error("Error getting player entity ID:", error);
+      }
+    }
+
     // Helper functions for decoding inventory data
     function decodeUint16(bytesHex) {
       if (bytesHex === '0x') return 0;
@@ -376,89 +430,7 @@
       return parseInt(last4Chars, 16);
     }
 
-    function decodeObjectType(staticData) {
-      if (staticData === '0x') return 0;
-      const objectTypeHex = staticData.slice(-8, -4);
-      return parseInt(objectTypeHex, 16);
-    }
-
-    function renderTrades() {
-      const container = document.getElementById('trades-container');
-      const tradesHTML = trades.map(trade => `
-        <div class="trade-card">
-          <div class="trade-title">${trade.name}</div>
-          <div class="trade-desc">${trade.description}</div>
-          <div class="trade-exchange">
-            <div class="trade-item">
-              <div class="item-name">${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.item : 'ETH'}</div>
-              <div class="item-amount">${trade.input.type === 'item' ? trade.input.amount + 'x' : trade.input.amount}</div>
-            </div>
-            <div class="trade-arrow">→</div>
-            <div class="trade-item">
-              <div class="item-name">${trade.output.emoji} ${trade.output.item}</div>
-              <div class="item-amount">${trade.output.amount}x</div>
-            </div>
-          </div>
-          <button class="trade-button" data-trade-id="${trade.id}" onclick="executeTrade('${trade.id}')">
-            Make Trade
-          </button>
-        </div>
-      `).join('');
-      container.innerHTML = tradesHTML;
-    }
-
-
-
-
-
-    // Initialize world contract
-    async function initializeWorldContract() {
-      try {
-        // Try to get world contract from window
-        world = window.world || window.dust?.world;
-        
-        if (!world) {
-          console.log("World contract not available yet, will retry later");
-          return;
-        }
-        
-        console.log("World contract initialized:", world);
-      } catch (error) {
-        console.error("Error initializing world contract:", error);
-      }
-    }
-
-    // Load trades
-    function loadTrades() {
-      renderTrades();
-    }
-
-    // Initialize the UI
-    async function initializeUI() {
-      try {
-        console.log("Initializing Shop Chest UI...");
-        
-        // Set the chest entity ID directly
-        chestEntityId = '0x03000002bd000000b5fffff97800000000000000000000000000000000000000';
-        console.log("Chest Entity ID set to:", chestEntityId);
-        
-        // Initialize world contract
-        await initializeWorldContract();
-        
-        console.log("Chest Entity ID:", chestEntityId);
-        console.log("Player Entity ID:", playerEntityId);
-        console.log("World object:", world);
-        
-        // Load trades
-        loadTrades();
-        showStatus('🏪 Shop Chest is ready for trading!');
-        
-      } catch (error) {
-        console.error("Error initializing UI:", error);
-        showStatus('❌ Error initializing UI: ' + error.message);
-      }
-    }
-
+    // Initialize when page loads
     document.addEventListener('DOMContentLoaded', function() {
       initializeUI();
     });
