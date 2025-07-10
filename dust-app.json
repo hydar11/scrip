@@ -1,16 +1,9 @@
 {
   "$schema": "https://esm.sh/pr/dustproject/dust/dustkit@5d718ab/json-schemas/app-config.json",
   "name": "Shop Chest",
-  "description": "A shop where players can trade items for other items or ETH",
-  "version": "1.0.0",
-  "author": "Your Name",
-  "startUrl": "https://raw.githubusercontent.com/hydar11/script/refs/heads/main/index.html",
+  "startUrl": "/index.html",
   "defaultSize": {
     "width": 600,
     "height": 500
-  },
-  "metadata": {
-    "tags": ["shop", "trading", "items"],
-    "category": "commerce"
   }
 } 
