@@ -1,9 +1,9 @@
-{
-  "$schema": "https://esm.sh/pr/dustproject/dust/dustkit@5d718ab/json-schemas/app-config.json",
-  "name": "Shop Chest",
-  "startUrl": "/",
-  "defaultSize": {
-    "width": 600,
-    "height": 500
+  {
+    "$schema": "https://esm.sh/pr/dustproject/dust/dustkit@5d718ab/json-schemas/app-config.json",
+    "name": "Shop Chest",
+    "startUrl": "/index.html",
+    "defaultSize": {
+      "width": 600,
+      "height": 500
+    }
   }
-} 
