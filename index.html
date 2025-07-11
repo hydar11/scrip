@@ -1,412 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Shop Chest</title>
-  <meta name="viewport" content="width=600, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #232526 0%, #414345 100%);
-      color: #f3f3f3;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .shop-header {
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      padding: 2em 0 1em 0;
-      text-align: center;
-      box-shadow: 0 2px 8px #0003;
-    }
-    .shop-header h1 {
-      font-size: 2.7em;
-      margin: 0 0 0.2em 0;
-      letter-spacing: 2px;
-      color: #fff;
-      text-shadow: 0 2px 8px #0005;
-    }
-    .shop-header p {
-      font-size: 1.2em;
-      color: #e0e0e0;
-      margin: 0;
-      opacity: 0.85;
-    }
-    .container {
-      flex: 1;
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 2em 1em 1em 1em;
-    }
-    .trade-grid {
-      display: grid;
-      gap: 2em;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      margin-top: 2em;
-    }
-    .trade-card {
-      background: #292b2f;
-      border-radius: 18px;
-      box-shadow: 0 4px 24px #0005;
-      padding: 2em 1.5em 1.5em 1.5em;
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #393b40;
-      animation: fadeInUp 0.7s cubic-bezier(.39,.575,.56,1.000);
-    }
-    .trade-card:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 8px 32px #0007;
-      border-color: #764ba2;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .trade-title {
-      font-size: 1.4em;
-      margin-bottom: 0.3em;
-      color: #a991e4;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-    .trade-desc {
-      font-size: 1em;
-      margin-bottom: 1.2em;
-      color: #bdbdbd;
-      font-style: italic;
-    }
-    .trade-exchange {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 1.2em 0 1.5em 0;
-      padding: 1em;
-      background: #232326;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px #0002;
-    }
-    .trade-item {
-      text-align: center;
-      flex: 1;
-    }
-    .trade-arrow {
-      font-size: 2em;
-      color: #667eea;
-      margin: 0 18px;
-      font-weight: bold;
-      text-shadow: 0 1px 4px #0003;
-    }
-    .item-name {
-      font-weight: bold;
-      color: #fff;
-      font-size: 1.1em;
-      margin-bottom: 0.2em;
-    }
-    .item-amount {
-      color: #bdbdbd;
-      font-size: 0.95em;
-    }
-    .trade-button {
-      width: 100%;
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      color: white;
-      border: none;
-      padding: 14px 0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1em;
-      font-weight: bold;
-      transition: all 0.2s;
-      margin-top: 0.5em;
-      box-shadow: 0 2px 8px #0002;
-    }
-    .trade-button:hover {
-      background: #2d3748;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px #0002;
-    }
-    .refresh-button {
-      background: #4a5568;
-      color: #e0e0e0;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-      font-weight: bold;
-      margin: 10px 0;
-      transition: background 0.2s;
-    }
-    .refresh-button:hover {
-      background: #3a404a;
-    }
-    .trade-button:active {
-      transform: translateY(0);
-    }
-    .status-message {
-      margin: 1.5em 0 0.5em 0;
-      padding: 1em;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.05em;
-      background: #232326;
-      color: #a991e4;
-      border: 1px solid #393b40;
-      box-shadow: 0 2px 8px #0002;
-    }
-    footer {
-      text-align: center;
-      margin-top: 2em;
-      color: #a0aec0;
-      font-size: 0.9em;
-    }
-    @media (max-width: 700px) {
-      .container {
-        padding: 1em 0.2em;
-      }
-      .trade-grid {
-        grid-template-columns: 1fr;
-      }
-      .trade-exchange {
-        flex-direction: column;
-        gap: 10px;
-      }
-      .trade-arrow {
-        transform: rotate(90deg);
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dust Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-  <div class="shop-header">
-    <h1>🏪 Shop Chest</h1>
-    <p>Trade your items and ETH in the marketplace</p>
-  </div>
-  <div class="container">
-    <div id="status">🏪 Shop Chest is ready for trading!</div>
-    <div class="trade-grid" id="trades-container"></div>
-  </div>
-  <div id="swap-container">
-    <h2>Swap 1 Pumpkin for 1 PumpkinSoup</h2>
-    <button id="swap-btn">Swap</button>
-    <div id="swap-status"></div>
-  </div>
-  <footer>
-    &copy; 2024 Shop Chest &mdash; Powered by Dust/MUD
-  </footer>
-  <script>
-    // Global variables
-    let world = 0x253eb85B3C953bFE3827CC14a151262482E7189C ;
-
-    // Trade definitions
-    const trades = [
-      {
-        id: 'pumpkin-soup',
-        name: 'Pumpkin to Soup',
-        description: 'Trade your Pumpkin for delicious PumpkinSoup',
-        input: { type: 'item', item: 'Pumpkin', amount: 1, emoji: '🎃' },
-        output: { item: 'PumpkinSoup', amount: 1, emoji: '🥣' }
-      },
-      {
-        id: 'eth-pumpkin',
-        name: 'ETH to Pumpkin',
-        description: 'Buy Pumpkin with ETH',
-        input: { type: 'eth', amount: '0.000001', emoji: '💎' },
-        output: { item: 'Pumpkin', amount: 1, emoji: '🎃' },
-        ethRequired: 1000000000000
-      }
-    ];
-
-    // Helper: Find a slot with at least 1 Pumpkin
-    async function findPumpkinSlot(world, playerEntityId) {
-      for (let i = 0; i < 36; i++) {
-        try {
-          const encodedSlot = "0x" + i.toString(16).padStart(64, '0');
-          const slotData = await world.read("getRecord",
-            "0x74620000000000000000000000000000496e76656e746f7279536c6f74000000",
-            [playerEntityId, encodedSlot],
-          );
-          const staticData = slotData[0];
-          const amount = decodeUint16(staticData);
-          const objectType = decodeObjectType(staticData);
-          if (objectType === 94 && amount > 0) {
-            return i;
-          }
-        } catch (error) {}
-      }
-      return null;
-    }
-    function decodeUint16(bytesHex) {
-      if (bytesHex === '0x') return 0;
-      const last4Chars = bytesHex.slice(-4);
-      return parseInt(last4Chars, 16);
-    }
-    function decodeObjectType(staticData) {
-      if (staticData === '0x') return 0;
-      const objectTypeHex = staticData.slice(-8, -4);
-      return parseInt(objectTypeHex, 16);
-    }
-
-    // UI rendering
-    function renderTrades() {
-      const container = document.getElementById('trades-container');
-      const tradesHTML = trades.map(trade => `
-        <div class="trade-card">
-          <div class="trade-title">${trade.name}</div>
-          <div class="trade-desc">${trade.description}</div>
-          <div class="trade-exchange">
-            <div class="trade-item">
-              <div class="item-name">${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.item : 'ETH'}</div>
-              <div class="item-amount">${trade.input.type === 'item' ? trade.input.amount + 'x' : trade.input.amount}</div>
-            </div>
-            <div class="trade-arrow">→</div>
-            <div class="trade-item">
-              <div class="item-name">${trade.output.emoji} ${trade.output.item}</div>
-              <div class="item-amount">${trade.output.amount}x</div>
-            </div>
-          </div>
-          <button class="trade-button" data-trade-id="${trade.id}" onclick="executeTrade('${trade.id}')">
-            Make Trade
-          </button>
+    <div class="container">
+        <h1>🧪 Dust Connection Test</h1>
+        
+        <div id="status" class="status disconnected">
+            Статус: Отключено
         </div>
-      `).join('');
-      container.innerHTML = tradesHTML;
-    }
+        
+        <div class="test-section">
+            <h3>1. Базовое подключение</h3>
+            <button id="connectBtn" onclick="testBasicConnection()">Подключиться к Dust</button>
+            <button id="checkContextBtn" onclick="checkAppContext()" disabled>Проверить контекст</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Простые API вызовы</h3>
+            <button id="getPositionBtn" onclick="testGetPlayerPosition()" disabled>Получить позицию игрока</button>
+            <button id="setWaypointBtn" onclick="testSetWaypoint()" disabled>Установить путевую точку</button>
+            <button id="getSlotsBtn" onclick="testGetSlots()" disabled>Получить слоты инвентаря</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Проверка системных вызовов</h3>
+            <button id="testSystemCallBtn" onclick="testSystemCall()" disabled>Тест системного вызова</button>
+        </div>
+        
+        <h3>📋 Лог тестов:</h3>
+        <div id="log" class="log">Готов к тестированию...</div>
+    </div>
 
-    // Status
-    function updateStatus(message) {
-      const statusElement = document.getElementById('status');
-      if (statusElement) statusElement.textContent = message;
-    }
-    function showStatus(message) { updateStatus(message); }
+    <script type="module">
+        let dustClient = null;
+        let appContext = null;
 
-    // Execute trade
-    async function executeTrade(tradeId) {
-      const trade = trades.find(t => t.id === tradeId);
-      if (!trade) { showStatus('Trade not found!'); return; }
-      const button = document.querySelector(`[data-trade-id="${tradeId}"]`);
-      button.disabled = true; button.textContent = 'Processing...';
-      try {
-        if (!world) { showStatus('❌ Error: Could not access world object'); return; }
-        if (!playerEntityId) { showStatus('❌ Error: Could not find player entity ID'); return; }
-        if (trade.input.type === 'item') {
-          const pumpkinSlot = await findPumpkinSlot(world, playerEntityId);
-          if (pumpkinSlot === null) { showStatus('❌ You need Pumpkin to make this trade!'); return; }
-          await world.write("transferAmounts",
-            playerEntityId, playerEntityId, chestEntityId, [[pumpkinSlot, 1]]
-          );
-        } else {
-          await world.write("transferAmounts",
-            playerEntityId, playerEntityId, chestEntityId, [], { value: trade.ethRequired }
-          );
+        // Функция логирования
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
         }
-        showStatus(`✅ Trade completed! You exchanged ${trade.input.emoji} ${trade.input.type === 'item' ? trade.input.amount + 'x ' + trade.input.item : trade.input.amount + ' ETH'} for ${trade.output.emoji} ${trade.output.amount}x ${trade.output.item}`);
-      } catch (error) {
-        console.error("Trade error:", error);
-        showStatus('❌ Trade failed: ' + (error.message || 'Unknown error'));
-      } finally {
-        button.disabled = false;
-        button.textContent = 'Make Trade';
-      }
-    }
 
-    // Player entity ID detection (simple, can be improved)
-    async function getPlayerEntityId() {
-      if (window.playerEntityId) { playerEntityId = window.playerEntityId; return; }
-      for (let i = 1; i <= 5; i++) {
-        const testEntityId = `0x${i.toString(16).padStart(64, '0')}`;
-        for (let slot = 0; slot < 36; slot++) {
-          try {
-            const encodedSlot = "0x" + slot.toString(16).padStart(64, '0');
-            const slotData = await world.read("getRecord",
-              "0x74620000000000000000000000000000496e76656e746f7279536c6f74000000",
-              [testEntityId, encodedSlot],
-            );
-            const staticData = slotData[0];
-            const amount = decodeUint16(staticData);
-            if (amount > 0) { playerEntityId = testEntityId; return; }
-          } catch (error) {}
+        // Обновление статуса
+        function updateStatus(status, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = `Статус: ${message}`;
         }
-      }
-    }
 
-    // World detection (auto from Dust, or set manually)
-    async function initializeUI() {
-      world ;
-      if (!world) { showStatus('❌ Error: Could not access world object'); return; }
-      await getPlayerEntityId();
-      renderTrades();
-      showStatus('🏪 Shop Chest is ready for trading!');
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeUI();
-    });
-  </script>
-  <script>
-    // Hardcoded chest entity ID and object types (declare only once)
-    const chestEntityId = "0x030000019e000000a7fffffb0300000000000000000000000000000000000000";
-    const PUMPKIN_TYPE = 94;
-    const PUMPKIN_SOUP_TYPE = 32791;
-    let playerEntityId = null;
-    const swapBtn = document.getElementById('swap-btn');
-    const status = document.getElementById('swap-status');
-
-    async function detectPlayerEntityId() {
-      try {
-        if (
-          window.world &&
-          window.world.sessionClient &&
-          window.world.sessionClient.userAddress &&
-          window.world.utils &&
-          window.world.utils.encodePlayer
-        ) {
-          playerEntityId = 0x0123cc9decae3df41da42f00affa7be530921e9f100000000000000000000000 ;
-          swapBtn.disabled = false;
-          status.textContent = '';
-        } else {
-          throw new Error('Player entity ID could not be auto-detected.');
+        // Активация кнопок
+        function enableButtons() {
+            document.getElementById('checkContextBtn').disabled = false;
+            document.getElementById('getPositionBtn').disabled = false;
+            document.getElementById('setWaypointBtn').disabled = false;
+            document.getElementById('getSlotsBtn').disabled = false;
+            document.getElementById('testSystemCallBtn').disabled = false;
         }
-      } catch (e) {
-        playerEntityId = null;
-        swapBtn.disabled = true;
-        status.textContent = 'Error: Could not auto-detect player entity ID. Please reload in the Dust client.';
-      }
-    }
 
-    swapBtn.onclick = async function() {
-      status.textContent = "Processing...";
-      try {
-        if (!window.world) throw new Error("world object not found");
-        if (!playerEntityId) throw new Error("Player entity ID is not available");
-        const args = {
-          caller: playerEntityId,
-          target: chestEntityId,
-          deposits: [{
-            entityId: playerEntityId,
-            objectType: PUMPKIN_TYPE,
-            amount: 1
-          }],
-          withdrawals: [{
-            entityId: playerEntityId,
-            objectType: PUMPKIN_SOUP_TYPE,
-            amount: 1
-          }],
-          extraData: "0x"
+        // 1. БАЗОВОЕ ПОДКЛЮЧЕНИЕ
+        window.testBasicConnection = async function() {
+            try {
+                updateStatus('loading', 'Подключение...');
+                log('🔌 Попытка подключения к Dust клиенту...');
+
+                // Проверяем, что мы в iframe
+                if (window.parent === window) {
+                    throw new Error('❌ Это приложение должно быть запущено в iframe внутри Dust клиента');
+                }
+
+                // Пытаемся подключиться через postMessage
+                const channel = new MessageChannel();
+                
+                const connectionPromise = new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('⏰ Таймаут подключения (5 секунд)'));
+                    }, 5000);
+
+                    channel.port1.addEventListener('message', (event) => {
+                        clearTimeout(timeout);
+                        log('📨 Получен ответ от Dust клиента');
+                        if (event.data && event.data.dustkit) {
+                            resolve(event.data);
+                        } else {
+                            reject(new Error('❌ Неверный формат ответа от Dust клиента'));
+                        }
+                    }, { once: true });
+                });
+
+                // Отправляем запрос на подключение
+                channel.port1.start();
+                window.parent.postMessage({
+                    dustkit: '1.0.0',
+                    context: null
+                }, '*', [channel.port2]);
+
+                const response = await connectionPromise;
+                appContext = response.context;
+                
+                updateStatus('connected', '✅ Подключено к Dust клиенту');
+                log('✅ Успешно подключились к Dust клиенту!');
+                log(`📋 Контекст приложения: ${JSON.stringify(appContext, null, 2)}`);
+                
+                enableButtons();
+
+            } catch (error) {
+                updateStatus('disconnected', '❌ Ошибка подключения');
+                log(`❌ Ошибка подключения: ${error.message}`);
+                console.error('Ошибка подключения к Dust:', error);
+            }
         };
-        await window.world.write("transferAmounts", args, { value: "0" });
-        status.textContent = "Swap successful!";
-      } catch (e) {
-        status.textContent = "Swap failed: " + (e?.message || e);
-      }
-    };
 
-    window.addEventListener('DOMContentLoaded', detectPlayerEntityId);
-  </script>
+        // 2. ПРОВЕРКА КОНТЕКСТА
+        window.checkAppContext = function() {
+            if (!appContext) {
+                log('❌ Нет контекста приложения');
+                return;
+            }
+            
+            log('📋 Информация о контексте:');
+            log(`   ID приложения: ${appContext.id}`);
+            log(`   Адрес пользователя: ${appContext.userAddress}`);
+            log(`   Адрес мира: ${appContext.worldAddress}`);
+            log(`   Chain ID: ${appContext.chainId}`);
+            log(`   Конфигурация: ${JSON.stringify(appContext.config, null, 2)}`);
+            
+            if (appContext.via) {
+                log(`   Открыто через: entity=${appContext.via.entity}, program=${appContext.via.program}`);
+            }
+        };
+
+        // 3. ТЕСТ ПОЛУЧЕНИЯ ПОЗИЦИИ ИГРОКА
+        window.testGetPlayerPosition = async function() {
+            if (!appContext) {
+                log('❌ Нет подключения к Dust клиенту');
+                return;
+            }
+
+            try {
+                log('📍 Запрашиваем позицию игрока...');
+                
+                const response = await sendRpcRequest({
+                    method: "getPlayerPosition",
+                    params: {
+                        entity: appContext.userAddress
+                    }
+                });
+                
+                if (response.success) {
+                    const position = response.result;
+                    log(`✅ Позиция игрока получена: x=${position.x}, y=${position.y}, z=${position.z}`);
+                } else {
+                    log(`❌ Ошибка получения позиции: ${response.error}`);
+                }
+
+            } catch (error) {
+                log(`❌ Ошибка при получении позиции: ${error.message}`);
+            }
+        };
+
+        // 4. ТЕСТ УСТАНОВКИ ПУТЕВОЙ ТОЧКИ
+        window.testSetWaypoint = async function() {
+            if (!appContext) {
+                log('❌ Нет подключения к Dust клиенту');
+                return;
+            }
+
+            try {
+                log('🎯 Устанавливаем путевую точку...');
+                
+                const response = await sendRpcRequest({
+                    method: "setWaypoint",
+                    params: {
+                        entity: appContext.userAddress,
+                        label: `Тестовая точка ${Date.now()}`
+                    }
+                });
+                
+                if (response.success) {
+                    log('✅ Путевая точка установлена успешно!');
+                } else {
+                    log(`❌ Ошибка установки путевой точки: ${response.error}`);
+                }
+
+            } catch (error) {
+                log(`❌ Ошибка при установке путевой точки: ${error.message}`);
+            }
+        };
+
+        // 5. ТЕСТ ПОЛУЧЕНИЯ СЛОТОВ
+        window.testGetSlots = async function() {
+            if (!appContext) {
+                log('❌ Нет подключения к Dust клиенту');
+                return;
+            }
+
+            try {
+                log('📦 Запрашиваем слоты инвентаря...');
+                
+                const response = await sendRpcRequest({
+                    method: "getSlots",
+                    params: {
+                        entity: appContext.userAddress,
+                        objectType: 1, // тестовый тип объекта
+                        amount: 1,
+                        operationType: "withdraw"
+                    }
+                });
+                
+                if (response.success) {
+                    const slots = response.result.slots;
+                    log(`✅ Получены слоты: ${JSON.stringify(slots, null, 2)}`);
+                } else {
+                    log(`❌ Ошибка получения слотов: ${response.error}`);
+                }
+
+            } catch (error) {
+                log(`❌ Ошибка при получении слотов: ${error.message}`);
+            }
+        };
+
+        // 6. ТЕСТ СИСТЕМНОГО ВЫЗОВА
+        window.testSystemCall = async function() {
+            if (!appContext) {
+                log('❌ Нет подключения к Dust клиенту');
+                return;
+            }
+
+            try {
+                log('🔧 Тестируем системный вызов...');
+                
+                // Простой тестовый системный вызов
+                const response = await sendSystemCall({
+                    systemId: "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    abi: [{
+                        type: "function",
+                        name: "test",
+                        inputs: [],
+                        outputs: [],
+                        stateMutability: "view"
+                    }],
+                    functionName: "test",
+                    args: []
+                });
+                
+                if (response.success) {
+                    log('✅ Системный вызов выполнен успешно!');
+                    log(`📋 Результат: ${JSON.stringify(response.result, null, 2)}`);
+                } else {
+                    log(`❌ Ошибка системного вызова: ${response.error}`);
+                }
+
+            } catch (error) {
+                log(`❌ Ошибка при системном вызове: ${error.message}`);
+            }
+        };
+
+        // Вспомогательные функции для отправки запросов
+        async function sendRpcRequest(request) {
+            return new Promise((resolve) => {
+                const channel = new MessageChannel();
+                
+                channel.port1.addEventListener('message', (event) => {
+                    if (event.data && event.data.id === request.id) {
+                        resolve({
+                            success: !event.data.error,
+                            result: event.data.result,
+                            error: event.data.error?.message
+                        });
+                    }
+                }, { once: true });
+                
+                channel.port1.start();
+                window.parent.postMessage({
+                    jsonrpc: "2.0",
+                    id: request.id || Math.random().toString(36),
+                    method: request.method,
+                    params: request.params
+                }, '*', [channel.port2]);
+            });
+        }
+
+        async function sendSystemCall(systemCall) {
+            return new Promise((resolve) => {
+                const channel = new MessageChannel();
+                
+                channel.port1.addEventListener('message', (event) => {
+                    if (event.data && event.data.id === systemCall.id) {
+                        resolve({
+                            success: !event.data.error,
+                            result: event.data.result,
+                            error: event.data.error?.message
+                        });
+                    }
+                }, { once: true });
+                
+                channel.port1.start();
+                window.parent.postMessage({
+                    jsonrpc: "2.0",
+                    id: systemCall.id || Math.random().toString(36),
+                    method: "systemCall",
+                    params: [systemCall]
+                }, '*', [channel.port2]);
+            });
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', () => {
+            log('🚀 Приложение загружено. Готово к тестированию подключения к Dust клиенту.');
+            log('💡 Нажмите "Подключиться к Dust" для начала тестирования.');
+        });
+    </script>
 </body>
 </html> 
