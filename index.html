@@ -297,7 +297,7 @@
                     method: "getSlots",
                     params: {
                         entity: playerEntityId,
-                        objectType: 1, // тестовый тип объекта
+                        objectType: 94, // Pumpkin
                         amount: 1,
                         operationType: "withdraw"
                     }
@@ -356,7 +356,11 @@
                         "0x0000000000000000000000000000000000000000000000000000000000000002", // to (тестовый сундук)
                         [                  // amounts
                             {
-                                objectType: 1, // тестовый тип объекта
+                                objectType: 94, // Pumpkin (отдаём)
+                                amount: 1
+                            },
+                            {
+                                objectType: 32791, // PumpkinSoup (получаем)
                                 amount: 1
                             }
                         ],
