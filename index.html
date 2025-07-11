@@ -120,16 +120,28 @@
             document.getElementById('testSystemCallBtn').disabled = false;
         }
 
-        // Функция кодирования адреса в EntityId (bytes32)
+        // Функция кодирования адреса в EntityId (bytes32) - правильная версия
         function encodePlayerEntityId(userAddress) {
             // Убираем префикс 0x если есть
             const address = userAddress.replace('0x', '');
             
-            // Дополняем до 64 символов (32 байта) нулями слева
-            const paddedAddress = address.padStart(64, '0');
+            // Константы из Dust
+            const ENTITY_TYPE_BITS = 8n;
+            const ENTITY_ID_BITS = 256n - ENTITY_TYPE_BITS; // 248
+            const ADDRESS_BITS = 20n * 8n; // 160
+            const EntityTypes = { Player: 0x01 };
             
-            // Добавляем префикс 0x
-            return '0x' + paddedAddress;
+            // Преобразуем адрес в BigInt
+            const playerBigInt = BigInt('0x' + address);
+            
+            // Сдвигаем адрес на нужное количество бит
+            const shiftedAddress = playerBigInt << (ENTITY_ID_BITS - ADDRESS_BITS);
+            
+            // Кодируем с типом Player (0x01)
+            const encoded = (BigInt(EntityTypes.Player) << ENTITY_ID_BITS) | shiftedAddress;
+            
+            // Преобразуем в hex строку
+            return '0x' + encoded.toString(16).padStart(64, '0');
         }
 
         // 1. БАЗОВОЕ ПОДКЛЮЧЕНИЕ
