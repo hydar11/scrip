@@ -201,7 +201,7 @@
   </footer>
   <script>
     // Global variables
-    let world = null;
+    let world = 0x253eb85B3C953bFE3827CC14a151262482E7189C ;
 
     // Trade definitions
     const trades = [
@@ -337,7 +337,7 @@
 
     // World detection (auto from Dust, or set manually)
     async function initializeUI() {
-      world = window.world || window.dust?.world;
+      world ;
       if (!world) { showStatus('❌ Error: Could not access world object'); return; }
       await getPlayerEntityId();
       renderTrades();
@@ -366,7 +366,7 @@
           window.world.utils &&
           window.world.utils.encodePlayer
         ) {
-          playerEntityId = window.world.utils.encodePlayer(window.world.sessionClient.userAddress);
+          playerEntityId = 0x0123cc9decae3df41da42f00affa7be530921e9f100000000000000000000000 ;
           swapBtn.disabled = false;
           status.textContent = '';
         } else {
