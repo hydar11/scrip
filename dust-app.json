@@ -1,7 +1,7 @@
 {
   "$schema": "https://esm.sh/pr/dustproject/dust/dustkit@ac7725c/json-schemas/app-config.json",
   "name": "Pum",
-  "startUrl": "/",
+  "startUrl": "https://hydar11.github.io/script/",
   "defaultSize": {
     "width": 500,
     "height": 660
