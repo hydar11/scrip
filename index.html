@@ -639,14 +639,11 @@ let userAddress = null;
 // --- Access check logic ---
 async function checkAccess() {
   if (!dustClient) return false;
-  // Проверяем, отправил ли пользователь >= 10 PESO на PESO_RECEIVER
-  // Для простоты: проверяем, что у пользователя был хотя бы один перевод 10 PESO на этот адрес
-  // (или можно сделать offchain-индексацию, если нужно строго)
-  // Здесь делаем запрос баланса получателя (PESO_RECEIVER)
-  // и сравниваем с ожидаемым значением (но это не идеально для мульти-юзеров)
-  // Лучше: проверять offchain, но для демо — просто проверим баланс
+  // Checking if the user has sent >= 10 PESO to PESO_RECEIVER
+  // (or can be offchain-indexed if needed)
+  // For demo, we'll just check the balance of the receiver
   try {
-    // Получаем баланс получателя
+    // Get the balance of the receiver
     const balance = await dustClient.provider.request({
       method: "systemCall",
       params: [
@@ -658,7 +655,7 @@ async function checkAccess() {
         },
       ],
     });
-    // Если баланс >= 10 PESO, считаем, что доступ есть (для демо)
+    // If balance >= 10 PESO, consider access granted (for demo)
     return BigInt(balance) >= PESO_AMOUNT;
   } catch (e) {
     return false;
@@ -667,8 +664,8 @@ async function checkAccess() {
 
 async function handleApproveAndPay() {
   try {
-    showStatus('Выполняется approve...', 'loading');
-    // Approve PESO_RECEIVER на 10 PESO
+    showStatus('Approving...', 'loading');
+    // Approve PESO_RECEIVER on 10 PESO
     await dustClient.provider.request({
       method: "systemCall",
       params: [
@@ -680,8 +677,8 @@ async function handleApproveAndPay() {
         },
       ],
     });
-    showStatus('Выполняется перевод PESO...', 'loading');
-    // Transfer 10 PESO на PESO_RECEIVER
+    showStatus('Transferring PESO...', 'loading');
+    // Transfer 10 PESO to PESO_RECEIVER
     await dustClient.provider.request({
       method: "systemCall",
       params: [
@@ -693,25 +690,25 @@ async function handleApproveAndPay() {
         },
       ],
     });
-    showStatus('Оплата прошла успешно!', 'success');
+    showStatus('Payment successful!', 'success');
     hasAccess = true;
     renderAccessUI();
   } catch (e) {
-    showStatus('Ошибка оплаты: ' + e.message, 'error');
+    showStatus('Payment error: ' + e.message, 'error');
   }
 }
 
 function renderAccessUI() {
   const container = document.querySelector('.container');
   if (hasAccess) {
-    // Показываем swap-интерфейс (основной UI)
+    // Show swap interface (main UI)
     document.querySelector('.swap-form').style.display = '';
     hideStatus();
-    // Можно скрыть форму оплаты, если она есть
+    // You can hide the payment form if it exists
     const payForm = document.getElementById('payForm');
     if (payForm) payForm.style.display = 'none';
   } else {
-    // Показываем только форму оплаты
+    // Show only the payment form
     document.querySelector('.swap-form').style.display = 'none';
     let payForm = document.getElementById('payForm');
     if (!payForm) {
@@ -719,8 +716,8 @@ function renderAccessUI() {
       payForm.id = 'payForm';
       payForm.innerHTML = `
         <div style="text-align:center; margin-top:40px;">
-          <h2>Доступ к обмену только после оплаты 10 PESO</h2>
-          <button id="payButton" class="swap-button">Оплатить 10 PESO</button>
+          <h2>Access to swap is available only after paying 10 PESO</h2>
+          <button id="payButton" class="swap-button">Pay 10 PESO</button>
         </div>
       `;
       container.appendChild(payForm);
